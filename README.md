@@ -125,3 +125,17 @@ Thank you for helping us make Among Us bigger and better! If you have any questi
 No, the +25 modded flag is a separate option that changes some server authoritative logic to host authoritative logic, popular for host-only mods.
 Both AU MCI and the +25 modded flag can be used in combination, depending on the mods needs.
 
+# Mod Features
+
+## Host-only Mods
+
+### Chat commands
+We've added the ability for non-host players in host-only mods to directly send a chat command to the host. This allows the host to implement roles with special behaviors using chat as a way to use special abilities.
+
+Any mod with the +25 modded flag activates this feature on the lobby they are playing on. When active, when non-hosts send chat messages that start with `/cmd`, the chat message will only be sent to the host and will not be sent to any other player in the lobby.
+
+#### Usage example:
+A host-only mod with a role that can guess the impostor might use a format such as:
+`/cmd guess IsThisTheImpostor 1`
+
+The modded host can parse this message to interpret the command `guess` and the name of the suspected impostor `IsThisTheImpostor 1`, then can use a `GameDataTo` response to send a chat privately to only the guessing player.
