@@ -19,6 +19,7 @@ By registering your mod with the Among Us game server that hosts your modded lob
 
 ### Host-only Mod Registration +25 Modded-Flag
 _Applies to Host-only mods only_
+
 Among Us clients contain an int32 networking version we call the protocol version. Adding `25` to this version enables a "host authority mode" for the lobby.
 
 In "host authority mode", most Among Us gameplay features that have server authority is switched to host authority. This allows the host to hold power over the outcome of various gameplay features, enabling the ability to change the game's behavior.
@@ -58,10 +59,12 @@ b887635f-e35e-42a3-b950-0ebf2b05f9f8
 These are generic V4 UUIDs, and you can acquire a randomly generated Mod GUID for yourself online at sites like: https://www.uuidgenerator.net/ This GUID is how we distinguish your mod from other mods, so it's important to use the same one in the other steps below. 
 
 #### Hosting Modded Games
-Hosting a modded game requires the use of the new `Tags.HostModdedGame` (byte value of 25) tag packaged in the client. In the `InnerNetClient`'s `HostGame` method, modify the line 
-> msg.StartMessage(Tags.HostGame);
+Hosting a modded game requires the use of the new `Tags.HostModdedGame` (byte value of 25) tag packaged in the client. In the `InnerNetClient`'s `HostGame` method, modify the line
+```msg.StartMessage(Tags.HostGame);
+```
 to 
-> msg.StartMessage(Tags.HostModdedGame);
+```msg.StartMessage(Tags.HostModdedGame);
+```
 
 Next, append your Mod GUID to the host game message:
   ```
@@ -92,7 +95,7 @@ This allows our game server and matchmakers to mark all the games hosted by your
 #### Filtering against your own modded lobbies
 Modifying the Matchmaking filter system will allow us to serve games with your Mod GUID in the regular Find Game lobby search screen. 
 
-First, you will need to define a matchmaking filter to package with your game searches. The important part is that the Mod GUID you selected above is available in the AcceptedValues property and that the FilterType corresponds to the string value "mod":
+First, you will need to define a matchmaking filter to package with your game searches. The important part is that the Mod GUID you selected above is available in the `AcceptedValues` property and that the `FilterType` corresponds to the string value "mod":
 ```
     [Serializable]
     public class ModFilter : ISubFilter
