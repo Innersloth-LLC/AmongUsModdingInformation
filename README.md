@@ -60,11 +60,9 @@ These are generic V4 UUIDs, and you can acquire a randomly generated Mod GUID fo
 
 #### Hosting Modded Games
 Hosting a modded game requires the use of the new `Tags.HostModdedGame` (byte value of 25) tag packaged in the client. In the `InnerNetClient`'s `HostGame` method, modify the line
-```msg.StartMessage(Tags.HostGame);
-```
+`msg.StartMessage(Tags.HostGame);`
 to 
-```msg.StartMessage(Tags.HostModdedGame);
-```
+`msg.StartMessage(Tags.HostModdedGame);`
 
 Next, append your Mod GUID to the host game message:
   ```
@@ -122,6 +120,7 @@ Thank you for helping us make Among Us bigger and better! If you have any questi
 
 #### FAQ 
 *Does this replace the +25 Modded Flag?*
+
 No, the +25 modded flag is a separate option that changes some server authoritative logic to host authoritative logic, popular for host-only mods.
 Both AU MCI and the +25 modded flag can be used in combination, depending on the mods needs.
 
