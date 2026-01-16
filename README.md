@@ -45,7 +45,7 @@ The AU MCI is made up of three components:
 - A dedicated path to host modded games with your own Mod GUID
 - Matchmaking Filters for filtering lobbies against your own Mod GUID
 
-_The code samples below are provided in C#_
+_The code samples below are provided in C# and assume a working familiarity with modding the Among Us client code_
 
 #### Mod GUID/UUID
 The self-assigned Mod GUID is an identification tool for a modder to uniquely identify their game from other mods. Examples would look like: 
