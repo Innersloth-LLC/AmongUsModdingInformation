@@ -45,6 +45,8 @@ The AU MCI is made up of three components:
 - A dedicated path to host modded games with your own Mod GUID
 - Matchmaking Filters for filtering lobbies against your own Mod GUID
 
+_The code samples below are provided in C#_
+
 #### Mod GUID/UUID
 The self-assigned Mod GUID is an identification tool for a modder to uniquely identify their game from other mods. Examples would look like: 
 ```501f405a-7d89-4505-b5a8-f4200c10d625
@@ -56,12 +58,15 @@ bc634373-dd53-453b-8711-86e4ba3d0c32
 b887635f-e35e-42a3-b950-0ebf2b05f9f8
 73f2dd39-106c-4422-aa51-0f89f12b42cb
 ```
-These are generic V4 UUIDs, and you can acquire a randomly generated Mod GUID for yourself online at sites like: https://www.uuidgenerator.net/ This GUID is how we distinguish your mod from other mods, so it's important to use the same one in the other steps below. 
+These are generic V4 UUIDs, and you can acquire a randomly generated Mod GUID for yourself online at sites like: https://www.uuidgenerator.net/ This GUID is how we distinguish your mod from other mods, so *it's important to use the same one in the other steps below*. 
 
 #### Hosting Modded Games
 Hosting a modded game requires the use of the new `Tags.HostModdedGame` (byte value of 25) tag packaged in the client. In the `InnerNetClient`'s `HostGame` method, modify the line
+
 `msg.StartMessage(Tags.HostGame);`
+
 to 
+
 `msg.StartMessage(Tags.HostModdedGame);`
 
 Next, append your Mod GUID to the host game message:
@@ -135,6 +140,7 @@ Any mod with the +25 modded flag activates this feature on the lobby they are pl
 
 #### Usage example:
 A host-only mod with a role that can guess the impostor might use a format such as:
+
 `/cmd guess IsThisTheImpostor 1`
 
 The modded host can parse this message to interpret the command `guess` and the name of the suspected impostor `IsThisTheImpostor 1`, then can use a `GameDataTo` response to send a chat privately to only the guessing player.
