@@ -6,7 +6,7 @@ For inquiries about modding, please contact `modding@innersloth.com`
 _Innersloth does not officially support mods and may change requirements or restrictions at anytime, especially if changes are required to increase security or protect players!_
 
 ## Classification of Mods
-From the perspective of mods that use Innersloth's backend, there are two major categories of mods that are treated differently in Innersloth's servers.
+From the perspective of mods that use Innersloth's backend, there are two major categories of mods, which are treated differently in Innersloth's servers.
 
 #### 1 - Host-only Mods
 These mods require only the host's client to be modded to function, relying on host-authority of state to achieve modded functionality. While additional functionality is limited, accessibility to users without the mod installed is increased.
