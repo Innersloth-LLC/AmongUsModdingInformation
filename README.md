@@ -144,3 +144,79 @@ A host-only mod with a role that can guess the impostor might use a format such 
 `/cmd guess IsThisTheImpostor 1`
 
 The modded host can parse this message to interpret the command `guess` and the name of the suspected impostor `IsThisTheImpostor 1`, then can use a `GameDataTo` response to send a chat privately to only the guessing player.
+
+### Packed GameDataTo messages
+We've added the ability for GameDataTo messages to be packed together for host-only mods. Each packed GameDataTo message in the packet can be directed to different remote players in the lobby.
+
+Host-only mods have devised methods to create new functionality that relies on desynchronizing the state that each remote player experiences. These methodologies often require a burst of packets to update each remote player in a fan out to n-1 players for a lobby with n players.
+
+We need to be mindful about packet send rates to maintain security and performance of the Among Us game servers. As such, mods should always do as much as possible to minimize packet send rate for non-vanilla Among Us functionality. See more information below on Packet Send Rates for strategies to minimize send rate beyond using GameDataTo packing.
+
+To use GameDataTo packing, use the top level message tag `Tags.PackedGameDataTo` which has a byte value of `26`. The message requires the GameId. Pseudocode example is as follows:
+
+```
+int currentGameId = AmongUsClient.Instance.GameId;
+MessageWriter msg = MessageWriter.Get(SendOption.Reliable);
+msg.StartMessage(Tags.PackedGameDataTo);
+msg.WritePacked(currentGameId);
+
+foreach (submsg to pack)
+{
+    msg.StartMessage(Tags.GameDataTo);
+    msg.Write(currentGameId);
+    msg.WritePacked(submsg target ClientId);
+    msg.StartMessage((byte)GameDataTypes.RpcFlag or DataFlag);
+    // serialize submsg contents
+    msg.EndMessage(); // Rpc/DataFlag
+    msg.EndMessage(); // GameDataTo
+}
+
+msg.EndMessage(); // PackedGameDataTo
+```
+
+Requirements:
+1. Can only pack GameDataTo Tag types together
+2. Each GameDataTo message must contain the correct game id
+3. Full MessageWriter packet size, including header must be less than or equal to 1200 bytes
+
+# Packet Send Rates
+Packet send rates are an important consideration for multiplayer games for performance and security. All clients that connect to Innersloth's Among Us GameServers are required to follow any required limitations on packet send rates and sizes.
+
+When developing a mod for Among Us, you must take packet send rates and packet sizes in consideration.
+
+## Send rates
+Innersloth is still in the process of determining exact send rate requirements for mods. While it is likely we can provide some extra room for mods, security comes first and we may need to apply strict rate limits to prevent disruption to the playerbase.
+
+If you're an Among Us mod developer, you must take care to minimize send rates. If there's a functionality that you think can only be achieved with a burst of messages, please contact `modding@innersloth.com` to explain your use case.
+
+### Strategies to reduce send rate
+Here are some strategies that can be applied to reduce send rate:
+1. Use the GameDataTo packing feature (see above)
+2. Split messages between Reliable and Unreliable channels when possible
+3. Spread packets across multiple frames or seconds
+4. Utilize built in rate limiting queues and streams (see below)
+
+### Built in rate limit queues
+1 - RPCs
+Non-competitive RPCs use a queue for optimized send rate packing:
+
+```
+// Reliable example
+RpcSetScannerMessage rpc = new RpcSetScannerMessage(this.NetId, value, cnt);
+AmongUsClient.Instance.LateBroadcastReliableMessage(rpc);
+
+// Unreliable example
+RpcPlayAnimationMessage rpc = new RpcPlayAnimationMessage(this.NetId, animType);
+AmongUsClient.Instance.LateBroadcastUnreliableMessage(rpc);
+```
+
+2 - DataFlags
+All DataFlag messages, which update the state of an InnerNetObject, are sent using message streams and a dirty flag pattern. Updating a streamed objects data and setting it to dirty will induce the streamed object system to send the update to all players.
+
+InnerNetObjects generally auto-set their dirty state using `this.SetDirtyBit(1);`.
+
+## Packet sizes
+The maximum `MessageReader` messasge size allowed (header included) is 1200 bytes.
+
+### Strategies to control packet sizes
+A simple strategy to control packet size is to use a queue and pack messages until adding an additional message would push the size of the packet beyond the capacity limit. This strategy can be used with rate limiting strategies to control both the size and rate of outgoing packets.
