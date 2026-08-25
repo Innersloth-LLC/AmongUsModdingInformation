@@ -17,6 +17,11 @@ These mods require all clients connected to the lobby to be modded with the same
 ## Mod Registration/Identification
 By registering your mod with the Among Us game server that hosts your modded lobby, your modded lobby is granted special treatment with respect to state authority and validation.
 
+There are two types of mod registration, `+25 modded-flag`, and `mod GUID`.
+
+### Is Mod Registration Required?
+Any modification to the Among Us gameplay functionality may be subject to requiring some form of mod registration. For more details, please review Innersloth's mod policy at: https://www.innersloth.com/among-us-mod-policy/
+
 ### Host-only Mod Registration +25 Modded-Flag
 _Applies to Host-only mods only_
 
