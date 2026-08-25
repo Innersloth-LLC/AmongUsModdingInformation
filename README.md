@@ -80,9 +80,9 @@ The class has a static string named `ModRegistrationGuidString`.
 
 By default, a null or empty string will be interpreted by the Among Us code base to have no mod registration, and will use the normal HostGame methods and will not add mod filtration to matchmaking requests (see Advanced Technical Details below).
 
-However, if this string is value is modded to your mod's GUID, it will automatically apply to host game functionality, and host your game w/ the expected HostModdedGame tag, including the specified GUID. Furthermore, the matchmaking filtration code will detect this change and automatically add a mod filter using the same GUID.
+However, if this string's value is modded to your mod's GUID, it will automatically apply to host game functionality, and host your game with the expected HostModdedGame tag, including the specified GUID. Furthermore, the matchmaking filtration code will detect this change and automatically add a mod filter using the same GUID.
 
-With this feature, it should be possible to registration a mod GUID with greater ease compared with previous version of Among Us.
+With this feature, it should be possible to register a mod GUID with greater ease compared with previous version of Among Us.
 
 #### Additional Details
 The `bool CurrentModRegistration.TryGetModRegistrationGuid(out Guid guid)` static method is the method which other systems use to detect a mod GUID. It includes null/string empty check as well as GUID parsing to ensure that the GUID string is a valid GUID.
