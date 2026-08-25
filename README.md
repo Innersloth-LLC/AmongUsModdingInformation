@@ -39,7 +39,10 @@ Innersloth is happy to present the Among Us Modded Client Identification (AU MCI
 
 While we do not officially provide technical support for mods (see our Mod Policy here: https://www.innersloth.com/among-us-mod-policy/), we want to give the modding community better transparency and insight, while also bolstering our anti-cheat measures in non-modded games. 
 
-#### Technical Summary
+
+## How to register an All-client Mod
+
+### Overview
 The AU MCI is made up of three components:
 - A self-assigned Mod GUID
 - A dedicated path to host modded games with your own Mod GUID
@@ -59,6 +62,30 @@ b887635f-e35e-42a3-b950-0ebf2b05f9f8
 73f2dd39-106c-4422-aa51-0f89f12b42cb
 ```
 These are generic V4 UUIDs, and you can acquire a randomly generated Mod GUID for yourself online at sites like: https://www.uuidgenerator.net/ This GUID is how we distinguish your mod from other mods, so *it's important to use the same one in the other steps below*. 
+
+#### Registration methods
+Ultimately, registration requires understanding of how to modify Among Us, by finding where in the Among Us codebase to inject or change functionality. Innersloth does not provide information on how to modify the Among Us application. However, below we provide information on how Mod registration can be achieved.
+
+### Built-in Registration Helpers (Among Us 18.0+)
+From community feedback, we understood that inline can create difficulties in adding mod registration to a mod. We decided to build in mod registration functionality directly into the client, providing an easier way to implement.
+
+We've added static class called `CurrentModRegistration`.
+
+The class has a static string named `ModRegistrationGuidString`.
+
+By default, a null or empty string will be interpreted by the Among Us code base to have no mod registration, and will use the normal HostGame methods and will not add mod filtration to matchmaking requests (see Advanced Technical Details below).
+
+However, if this string is value is modded to your mod's GUID, it will automatically apply to host game functionality, and host your game w/ the expected HostModdedGame tag, including the specified GUID. Furthermore, the matchmaking filtration code will detect this change and automatically add a mod filter using the same GUID.
+
+With this feature, it should be possible to registration a mod GUID with greater ease compared with previous version of Among Us.
+
+#### Additional Details
+The `bool CurrentModRegistration.TryGetModRegistrationGuid(out Guid guid)` static method is the method which other systems use to detect a mod GUID. It includes null/string empty check as well as GUID parsing to ensure that the GUID string is a valid GUID.
+
+Mods that may want to switch between registered GUIDs may be able to leverage `ModRegistrationGuidString` or `TryGetModRegistrationGuid` to dynamically switch mod GUIDs before creating or searching for a lobby.
+
+### Advanced Technical Details
+In this section, we provide more technical details in how registration and filtration works.
 
 #### Hosting Modded Games
 Hosting a modded game requires the use of the new `Tags.HostModdedGame` (byte value of 25) tag packaged in the client. In the `InnerNetClient`'s `HostGame` method, modify the line
@@ -123,11 +150,13 @@ By adding these components, the Find Game screen will tell our matchmakers that 
 
 Thank you for helping us make Among Us bigger and better! If you have any questions or concerns, please refer to our mod policy or reach out to us at `modding@innersloth.com`.
 
-#### FAQ 
+### FAQ 
 *Does this replace the +25 Modded Flag?*
 
 No, the +25 modded flag is a separate option that changes some server authoritative logic to host authoritative logic, popular for host-only mods.
-Both AU MCI and the +25 modded flag can be used in combination, depending on the mods needs.
+
+*Can the +25 Modded Flag and Mod GUID be used together?*
+Yes, the AU MCI mod GUID registration and the +25 modded flag can be used in combination, depending on the mods needs.
 
 # Mod Features
 
